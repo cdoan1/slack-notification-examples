@@ -1,17 +1,74 @@
 import requests
+from requests.structures import CaseInsensitiveDict
 import json
+import os
 
-def post_message_to_slack(text, blocks = None):
-    return requests.post('https://example_endpoint.com', {
-        'token': slack_token,
-        'channel': slack_channel,
-        'text': text,
-        'icon_emoji': slack_icon_emoji,
-        'username': slack_user_name,
-        'blocks': json.dumps(blocks) if blocks else None
-    }).json()
+url = os.environ['SLACK_WEBHOOK_URL']
+acm_url = os.environ['ACM_URL']
 
-slack_info = 'There are *{}* double images detected for *{}* products. Please check the <https://{}.s3-eu-west-1.amazonaws.com/{}|Double Images Monitor>.'.format(
-  123, 123, "foobar", "barfoo")
+# attachments
+A1 = os.environ.get('A1', 'https://www.redhat.com')
+A2 = os.environ.get('A2', 'https://www.redhat.com')
 
-post_message_to_slack(slack_info)
+channel = '#team-acm-alertmanager-stage'
+headers = CaseInsensitiveDict()
+headers["Content-Type"] = "application/json"
+
+ACM='`2.6.0-DOWNSTREAM-2022-07-13-23-23-00`'
+MCE='`2.6.0-DOWNSTREAM-2022-07-13-23-23-00`'
+SPRINT=13
+IDP_VERSION = "0.3.3"
+OCP_VERSION = "4.10.13"
+
+# text format
+S="\n> RHACM - Sprint " + str(SPRINT)
+U="\n> URL: " + acm_url
+I="\n> IDP-MGMT-CONFIG: " + IDP_VERSION
+O="\n> OCP version: " + "`" + OCP_VERSION + "`"
+F="\n> See this doc for environment details:"
+T="> *2.6.0 Playback Demo Clusters Available!* :rocket:" + S + U + "\n> ACM: " + ACM + "\n> MCE: " + MCE + I + O
+
+data_raw = {
+    "text": T,
+    "attachments": [
+        {
+            "title": "Deployment Details",
+            "title_link": A1
+        },
+        {
+            "title": "Pod Listing",
+            "title_link": A2
+        }
+    ]
+}
+
+# data_raw = {
+#     "text": T,
+#     "blocks": [
+#         {
+#             "type": "section",
+#             "text": {
+#                 "type": "mrkdwn",
+#                 "text": T
+#             }
+#         },
+#         {
+#             "type": "section",
+#             "text": {
+#                 "type": "mrkdwn",
+#                 "text": A1
+#             }
+#         },
+#         {
+#             "type": "section",
+#             "text": {
+#                 "type": "mrkdwn",
+#                 "text": A2
+#             }
+#         }
+#     ]
+# }
+
+resp = requests.post(url, headers=headers, data=json.dumps(data_raw))
+
+print(resp.status_code)
