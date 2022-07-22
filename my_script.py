@@ -6,6 +6,9 @@ import os
 url = os.environ['SLACK_WEBHOOK_URL']
 acm_url = os.environ['ACM_URL']
 
+print(url[0:10])
+print(acm_url[0:10])
+
 # attachments
 A1 = os.environ.get('A1', 'https://www.redhat.com')
 A2 = os.environ.get('A2', 'https://www.redhat.com')
