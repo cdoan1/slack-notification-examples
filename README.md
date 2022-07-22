@@ -1,5 +1,7 @@
 # slack-notification-examples
 
+1. Add github action step to post a message to slack channel
+
 # References
 
 ## Setting Up Github Action
