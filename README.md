@@ -1,2 +1,8 @@
 # slack-notification-examples
-2022 - collection of examples to integrate notification to slack
+
+# References
+
+## Setting Up Github Action
+
+https://github.com/actions/setup-python
+https://keestalkstech.com/2019/10/simple-python-code-to-send-message-to-slack-channel-without-packages/
